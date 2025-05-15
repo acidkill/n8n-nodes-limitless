@@ -1,10 +1,37 @@
 ![Banner image](https://user-images.githubusercontent.com/10284570/173569848-c624317f-42b1-45a6-ab09-f0ea3c247648.png)
 
-# n8n-nodes-starter
+# n8n-nodes-limitless
 
-This repo contains example nodes to help you get started building your own custom integrations for [n8n](n8n.io). It includes the node linter and other dependencies.
+## Overview
 
-To make your custom node available to the community, you must create it as an npm package, and [submit it to the npm registry](https://docs.npmjs.com/packages-and-modules/contributing-packages-to-the-registry).
+This node provides integration with the Limitless AI API, allowing you to retrieve lifelogs data from the Limitless platform. It implements the full API functionality based on the Limitless Developer API OpenAPI specification.
+
+The node supports all query parameters provided by the API, including:
+
+- Date and time filtering
+- Timezone specification
+- Pagination with cursors
+- Sorting direction
+- Content inclusion options
+- Result limits
+
+## Installation
+
+### Option 1: n8n Community Node (Recommended)
+
+Run the following command in your n8n installation directory:
+
+```
+npm install n8n-nodes-limitless
+```
+
+### Option 2: Custom Node
+
+Copy the node files to your n8n custom nodes directory:
+
+```
+~/.n8n/custom/
+```
 
 ## Prerequisites
 
@@ -17,22 +44,6 @@ You need the following installed on your development machine:
   npm install n8n -g
   ```
 * Recommended: follow n8n's guide to [set up your development environment](https://docs.n8n.io/integrations/creating-nodes/build/node-development-environment/).
-
-## Using this starter
-
-These are the basic steps for working with the starter. For detailed guidance on creating and publishing nodes, refer to the [documentation](https://docs.n8n.io/integrations/creating-nodes/).
-
-1. [Generate a new repository](https://github.com/n8n-io/n8n-nodes-starter/generate) from this template repository.
-2. Clone your new repo:
-   ```
-   git clone https://github.com/<your organization>/<your-repo-name>.git
-   ```
-3. Run `npm i` to install dependencies.
-4. Open the project in your editor.
-5. Browse the examples in `/nodes` and `/credentials`. Modify the examples, or replace them with your own nodes.
-6. Update the `package.json` to match your details.
-7. Run `npm lint` to check for errors or `npm lintfix` to automatically fix errors when possible.
-8. Test your node locally. Refer to [Run your node locally](https://docs.n8n.io/integrations/creating-nodes/test/run-node-locally/) for guidance.
 9. Replace this README with documentation for your node. Use the [README_TEMPLATE](README_TEMPLATE.md) to get started.
 10. Update the LICENSE file to use your details.
 11. [Publish](https://docs.npmjs.com/packages-and-modules/contributing-packages-to-the-registry) your package to npm.

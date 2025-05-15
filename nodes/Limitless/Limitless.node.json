@@ -1,0 +1,18 @@
+{
+	"node": "n8n-nodes-base.limitless",
+	"nodeVersion": "1.0",
+	"codexVersion": "1.0",
+	"categories": ["Data & Storage", "Analytics"],
+	"resources": {
+		"credentialDocumentation": [
+			{
+				"url": "https://docs.limitlessai.com/api"
+			}
+		],
+		"primaryDocumentation": [
+			{
+				"url": "https://docs.limitlessai.com/api"
+			}
+		]
+	}
+}
