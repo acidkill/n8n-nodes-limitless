@@ -5,6 +5,8 @@ import {
     INodeTypeDescription,
     NodeOperationError,
     IDataObject,
+    NodeConnectionType,
+    IHttpRequestMethods,
 } from 'n8n-workflow';
 import { OptionsWithUri } from 'request-promise-native';
 
@@ -20,8 +22,8 @@ export class Limitless implements INodeType {
         defaults: {
             name: 'Limitless',
         },
-        inputs: ['main'],
-        outputs: ['main'],
+        inputs: [{type: NodeConnectionType.Main}],
+        outputs: [{type: NodeConnectionType.Main}],
         credentials: [
             {
                 name: 'limitlessApi',
@@ -37,6 +39,7 @@ export class Limitless implements INodeType {
                     {
                         name: 'Get Lifelogs',
                         value: 'getLifelogs',
+                        action: 'Returns a list of lifelogs based on specified time range or date',
                         description: 'Returns a list of lifelogs based on specified time range or date',
                     },
                 ],
@@ -156,8 +159,11 @@ export class Limitless implements INodeType {
                         displayName: 'Limit',
                         name: 'limit',
                         type: 'number',
-                        default: 100,
-                        description: 'Limit the number of results',
+                        typeOptions: {
+                            minValue: 1,
+                        },
+                        default: 50,
+                        description: 'Max number of results to return',
                     },
                 ],
             },
@@ -183,12 +189,26 @@ export class Limitless implements INodeType {
                 const credentials = await this.getCredentials('limitlessApi');
                 const apiUrl = credentials.apiUrl as string;
 
-                const options: OptionsWithUri = {
-                    method: 'GET',
+                const options = {
+                    method: 'GET' as IHttpRequestMethods,
                     uri: `${apiUrl}/lifelogs`,
-                    qs: {},
+                    qs: {
+                        date: '',
+                        start: '',
+                        end: '',
+                        timezone: '',
+                        cursor: '',
+                        limit: 0
+                    } as {
+                        date?: string;
+                        start?: string;
+                        end?: string;
+                        timezone?: string;
+                        cursor?: string;
+                        limit?: number;
+                    },
                     json: true,
-                };
+                } as Omit<OptionsWithUri, 'uri' | 'method' | 'auth' | 'form' | 'followRedirect' | 'agentOptions'> & { uri: string; method: IHttpRequestMethods; qs: { date?: string; start?: string; end?: string; timezone?: string; cursor?: string; limit?: number } };
 
                 // Add query parameters based on filtering method
                 if (filteringMethod === 'byDate' && date) {
@@ -222,7 +242,12 @@ export class Limitless implements INodeType {
                     throw new NodeOperationError(this.getNode(), error);
                 }
 
-                returnData.push({ json: responseData });
+                returnData.push({
+                    json: {
+                        data: responseData,
+                        pagination: responseData?.pagination || {}
+                    }
+                });
             }
         }
 
