@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-limitless",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "n8n node for Limitless AI API integration",
   "keywords": [
     "n8n-community-node-package",
