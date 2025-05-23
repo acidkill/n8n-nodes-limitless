@@ -161,7 +161,54 @@ describe('Limitless Node', () => {
 			expect(result[0][0].json.pagination).toEqual({ nextCursor: 'abc' });
 		});
 
-		// Add more tests here for other scenarios (e.g., byStartEnd, different additionalFields, error handling)
+		it('should call API with correct parameters for "getLifelogs" by start/end time', async () => {
+			// Configure mockGetNodeParameter for this specific test
+			(mockExecuteFunctions.getNodeParameter as jest.Mock)
+				.mockImplementation((paramName: string, itemIndex: number, defaultValue?: any) => {
+					if (paramName === 'operation') return 'getLifelogs';
+					if (paramName === 'filteringMethod') return 'byStartEnd';
+					if (paramName === 'start') return '2023-10-26T10:00:00.000Z';
+					if (paramName === 'end') return '2023-10-27T10:00:00.000Z';
+					if (paramName === 'timezone') return 'Europe/Berlin';
+					if (paramName === 'additionalFields') return { limit: 10 };
+					return defaultValue;
+				});
+
+			// Mock the API response
+			const mockApiResponse = { lifelogs: [{ id: '1', title: 'Test Log' }], pagination: { nextCursor: 'abc' } };
+			(mockExecuteFunctions.helpers!.requestWithAuthentication as jest.Mock).mockResolvedValue(mockApiResponse);
+
+			const limitlessNode = new Limitless();
+			const result = await limitlessNode.execute.call(mockExecuteFunctions as IExecuteFunctions);
+
+			// Assertions
+			expect(mockExecuteFunctions.helpers!.requestWithAuthentication).toHaveBeenCalledTimes(1);
+			const expectedOptions = {
+				method: 'GET',
+				uri: 'https://mockapi.limitless.com/lifelogs',
+				qs: {
+					date: '',
+					start: '2023-10-26T00:00:00Z', // Start of day
+					end: '2023-10-27T23:59:59Z', // End of day
+					timezone: 'Europe/Berlin',
+					cursor: '',
+					limit: 10,
+				},
+				json: true,
+			};
+			// We need to use objectContaining because the actual options object has more properties due to the Omit<> & {} typing
+			expect(mockExecuteFunctions.helpers!.requestWithAuthentication).toHaveBeenCalledWith(
+				'limitlessApi',
+				expect.objectContaining(expectedOptions),
+			);
+
+			expect(result).toHaveLength(1);
+			expect(result[0]).toHaveLength(1);
+			expect(result[0][0].json.data).toEqual(mockApiResponse);
+			expect(result[0][0].json.pagination).toEqual({ nextCursor: 'abc' });
+		});
+
+		// Add more tests here for other scenarios (e.g., different additionalFields, error handling)
 
 		it('should throw NodeOperationError when API call fails', async () => {
 			// Configure mockGetNodeParameter for a basic operation
