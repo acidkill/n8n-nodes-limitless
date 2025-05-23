@@ -10,6 +10,8 @@ import {
     IHttpRequestMethods,
 } from 'n8n-workflow';
 import { OptionsWithUri } from 'request-promise-native';
+import { LLMChain } from 'langchain/chains';
+import { PromptTemplate } from '@langchain/core/prompts';
 
 export class Limitless implements INodeType {
     description: INodeTypeDescription = {
@@ -348,7 +350,7 @@ export class Limitless implements INodeType {
                         lifelogsArray = responseData.data;
                     } else {
                         // If response is not as expected, treat as empty or log an issue
-                        this.appendToLog('Unexpected response format when fetching lifelogs for summarization.');
+                        this.logger.warn('Unexpected response format when fetching lifelogs for summarization.');
                         lifelogsArray = [];
                     }
 
@@ -365,7 +367,7 @@ export class Limitless implements INodeType {
                 }
 
                 try {
-                    const chatModelInstance = await this.helpers.getChatModel(chatModelCredentialName, i, this.getContext('execution'));
+                    const chatModelInstance = await (this.helpers as any).getChatModel(chatModelCredentialName, i, this.getContext('node'));
 
                     // The prompt in JSON uses {{$json.lifelogsText}}, which is for n8n expressions.
                     // For LangChain PromptTemplate, it should be a simple variable like {text}.
