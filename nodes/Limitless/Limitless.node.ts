@@ -191,7 +191,6 @@ export class Limitless implements INodeType {
                 const apiUrl = credentials.apiUrl as string;
                 const normalizedApiUrl = apiUrl.replace(/\/$/, "");
                 const apiEndpointPath = this.getNodeParameter('apiEndpointPath', i, 'v1/lifelogs') as string;
-
                 const options = {
                     method: 'GET' as IHttpRequestMethods,
                     uri: `${normalizedApiUrl}/${apiEndpointPath.startsWith('/') ? apiEndpointPath.substring(1) : apiEndpointPath}`,
