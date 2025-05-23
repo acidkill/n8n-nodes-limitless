@@ -1,4 +1,4 @@
-
+{
   "name": "n8n-nodes-limitless",
   "version": "0.1.2",
   "description": "n8n node for Limitless AI API integration",
