@@ -382,7 +382,7 @@ export class Limitless implements INodeType {
                     const summaryResponse = await chain.call({ text: lifelogsText });
 
                     // Extract the summary text (actual key might be 'text', 'output', etc. depending on the chain/LLM)
-                    const summary = summaryResponse.text; 
+                    const summary = summaryResponse.text;
 
                     returnData.push({ json: { summary } });
 

@@ -9,7 +9,7 @@ import {
 // Import LLMChain for mocking
 import { LLMChain } from 'langchain/chains';
 
-// Mock the langchain/chains module
+// Mock the langchain module
 jest.mock('langchain/chains');
 
 describe('Limitless Node', () => {
@@ -128,16 +128,16 @@ describe('Limitless Node', () => {
 
 			// Mock the API response
 			const mockApiResponse = { lifelogs: [{ id: '1', title: 'Test Log' }], pagination: { nextCursor: 'abc' } };
-			(mockExecuteFunctions.helpers!.requestWithAuthentication as jest.Mock).mockResolvedValue(mockApiResponse);
+			(mockExecuteFunctions.helpers!.requestWithAuthentication.call as jest.Mock).mockResolvedValue(mockApiResponse);
 
 			const limitlessNode = new Limitless();
 			const result = await limitlessNode.execute.call(mockExecuteFunctions as IExecuteFunctions);
 
 			// Assertions
-			expect(mockExecuteFunctions.helpers!.requestWithAuthentication).toHaveBeenCalledTimes(1);
+			expect(mockExecuteFunctions.helpers!.requestWithAuthentication.call).toHaveBeenCalledTimes(1);
 			const expectedOptions = {
 				method: 'GET',
-				uri: 'https://mockapi.limitless.com/lifelogs',
+				uri: 'https://mockapi.limitless.com/v1/lifelogs', // Updated to match the API path
 				qs: {
 					date: '',
 					start: '2023-10-26T00:00:00Z', // Start of day
@@ -149,7 +149,8 @@ describe('Limitless Node', () => {
 				json: true,
 			};
 			// We need to use objectContaining because the actual options object has more properties due to the Omit<> & {} typing
-			expect(mockExecuteFunctions.helpers!.requestWithAuthentication).toHaveBeenCalledWith(
+			expect(mockExecuteFunctions.helpers!.requestWithAuthentication.call).toHaveBeenCalledWith(
+				mockExecuteFunctions, // this context
 				'limitlessApi',
 				expect.objectContaining(expectedOptions),
 			);
