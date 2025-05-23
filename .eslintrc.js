@@ -4,6 +4,8 @@
 module.exports = {
 	root: true,
 
+	plugins: ['@typescript-eslint'],
+
 	env: {
 		browser: true,
 		es6: true,
