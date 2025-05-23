@@ -188,10 +188,11 @@ export class Limitless implements INodeType {
             if (operation === 'getLifelogs') {
                 const credentials = await this.getCredentials('limitlessApi');
                 const apiUrl = credentials.apiUrl as string;
+                const normalizedApiUrl = apiUrl.replace(/\/$/, "");
 
                 const options = {
                     method: 'GET' as IHttpRequestMethods,
-                    uri: `${apiUrl}/lifelogs`,
+                    uri: `${normalizedApiUrl}/lifelogs`,
                     qs: {
                         date: '',
                         start: '',
