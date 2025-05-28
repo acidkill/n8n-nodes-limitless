@@ -140,8 +140,8 @@ describe('Limitless Node', () => {
 				uri: 'https://mockapi.limitless.com/v1/lifelogs', // Updated to match the API path
 				qs: {
 					date: '',
-					start: '2023-10-26T00:00:00Z', // Start of day
-					end: '2023-10-27T23:59:59Z', // End of day
+					start: '2023-10-26T10:00:00.000Z', // Pass directly as ISO-8601
+					end: '2023-10-27T10:00:00.000Z', // Pass directly as ISO-8601
 					timezone: 'Europe/Berlin',
 					cursor: '',
 					limit: 10,

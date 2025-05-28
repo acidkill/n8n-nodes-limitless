@@ -1,0 +1,273 @@
+{
+    "node": "n8n-nodes-base.limitless",
+    "nodeVersion": "1.0",
+    "codexVersion": "1.0",
+    "categories": ["Data & Storage", "Analytics"],
+    "resources": {
+        "credentialDocumentation": [
+            {
+                "url": "https://docs.limitlessai.com/api"
+            }
+        ],
+        "primaryDocumentation": [
+            {
+                "url": "https://docs.limitlessai.com/api"
+            }
+        ]
+    },
+    "properties": [
+        {
+            "displayName": "API Endpoint Path",
+            "name": "apiEndpointPath",
+            "type": "string",
+            "default": "v1/lifelogs",
+            "description": "The specific API path for lifelog operations (e.g., 'v1/lifelogs'). This is appended to your base API URL after normalization. Useful if the API version or path changes.",
+            "placeholder": "v1/lifelogs",
+            "displayOptions": {
+                "show": {
+                    "operation": [
+                        "getLifelogs",
+                        "exportMarkdown",
+                        "summarizeDay"
+                    ]
+                }
+            }
+        },
+        {
+            "displayName": "Operation",
+            "name": "operation",
+            "type": "options",
+            "options": [
+                {
+                    "name": "Get Lifelogs",
+                    "value": "getLifelogs",
+                    "action": "Fetches a list of lifelogs",
+                    "description": "Returns a list of lifelogs based on specified time range or date, with pagination support."
+                },
+                {
+                    "name": "Export Markdown",
+                    "value": "exportMarkdown",
+                    "action": "Exports lifelogs as markdown",
+                    "description": "Fetches lifelogs for a specified date or period and returns their full content, primarily focusing on the markdown format. Useful for backups or external processing."
+                },
+                {
+                    "name": "Summarize Day",
+                    "value": "summarizeDay",
+                    "action": "Summarizes a day's lifelogs using AI",
+                    "description": "Fetches all lifelogs for a given date, combines their text, and uses a selected Chat Model to generate a concise summary of the day's events and topics."
+                }
+            ],
+            "default": "getLifelogs",
+            "noDataExpression": true
+        },
+        {
+            "displayName": "Timezone",
+            "name": "timezone",
+            "type": "string",
+            "default": "UTC",
+            "description": "IANA timezone specifier for the date parameter (e.g., 'America/New_York', 'Europe/Berlin'). If missing, UTC is used. Affects how dates are interpreted for fetching lifelogs.",
+            "displayOptions": {
+                "show": {
+                    "operation": [
+                        "getLifelogs",
+                        "exportMarkdown",
+                        "summarizeDay"
+                    ]
+                }
+            }
+        },
+        {
+            "displayName": "Filtering Method",
+            "name": "filteringMethod",
+            "type": "options",
+            "options": [
+                {
+                    "name": "By Date",
+                    "value": "byDate"
+                },
+                {
+                    "name": "By Start/End Time",
+                    "value": "byStartEnd"
+                }
+            ],
+            "default": "byDate",
+            "displayOptions": {
+                "show": {
+                    "operation": [
+                        "getLifelogs"
+                    ]
+                }
+            }
+        },
+        {
+            "displayName": "Date",
+            "name": "date",
+            "type": "dateTime",
+            "default": "",
+            "required": true,
+            "description": "For 'Summarize Day': The specific date (YYYY-MM-DD) for which to summarize lifelogs (required). For 'Get Lifelogs'/'Export Markdown': Specifies the date for entries; if empty for 'Export Markdown', fetches most recent based on direction.",
+            "displayOptions": {
+                "show": {
+                    "operation": [
+                        "getLifelogs",
+                        "exportMarkdown",
+                        "summarizeDay"
+                    ]
+                },
+                "hide": {
+                    "operation": [
+                        "getLifelogs"
+                    ],
+                    "filteringMethod": [
+                        "byStartEnd"
+                    ]
+                }
+            }
+        },
+        {
+            "displayName": "Start Time",
+            "name": "start",
+            "type": "dateTime",
+            "default": "",
+            "description": "Start datetime in ISO-8601 format for the 'Get Lifelogs' operation when filtering by time range. Timezones/offsets will be ignored; uses the global Timezone setting.",
+            "displayOptions": {
+                "show": {
+                    "operation": [
+                        "getLifelogs"
+                    ],
+                    "filteringMethod": [
+                        "byStartEnd"
+                    ]
+                }
+            }
+        },
+        {
+            "displayName": "End Time",
+            "name": "end",
+            "type": "dateTime",
+            "default": "",
+            "description": "End datetime in ISO-8601 format for the 'Get Lifelogs' operation when filtering by time range. Timezones/offsets will be ignored; uses the global Timezone setting.",
+            "displayOptions": {
+                "show": {
+                    "operation": [
+                        "getLifelogs"
+                    ],
+                    "filteringMethod": [
+                        "byStartEnd"
+                    ]
+                }
+            }
+        },
+        {
+            "displayName": "Direction",
+            "name": "direction",
+            "type": "options",
+            "options": [
+                { "name": "Ascending", "value": "asc" },
+                { "name": "Descending", "value": "desc" }
+            ],
+            "default": "desc",
+            "description": "Order in which to retrieve lifelogs for 'Export Markdown'. 'Ascending' for oldest first, 'Descending' for most recent first.",
+            "displayOptions": {
+                "show": {
+                    "operation": ["exportMarkdown"]
+                }
+            }
+        },
+        {
+            "displayName": "Limit (for Export Markdown)",
+            "name": "limit",
+            "type": "number",
+            "typeOptions": { "minValue": 1 },
+            "default": 10,
+            "description": "Maximum number of lifelog entries to return for the 'Export Markdown' operation. For 'Get Lifelogs', use the Limit option under 'Additional Fields'.",
+            "displayOptions": {
+                "show": {
+                    "operation": ["exportMarkdown"]
+                }
+            }
+        },
+        {
+            "displayName": "Lifelog Fetch Limit",
+            "name": "lifelogLimit",
+            "type": "number",
+            "typeOptions": { "minValue": 1 },
+            "default": 100,
+            "description": "Maximum number of lifelog entries to fetch from the API for the 'Summarize Day' operation. Be mindful of potential context window limits of your chosen Chat Model.",
+            "displayOptions": {
+                "show": {
+                    "operation": ["summarizeDay"]
+                }
+            }
+        },
+        {
+            "displayName": "Summarization Prompt",
+            "name": "prompt",
+            "type": "string",
+            "typeOptions": {
+                "rows": 4
+            },
+            "default": "You are a helpful assistant that summarizes transcripts. Summarize the following transcripts into a concise overview of the day's events, activities, and key topics discussed:\n\n{text}",
+            "description": "The prompt template to use for summarization with the Chat Model. Use the placeholder '{text}' where the combined content of the day's lifelogs will be automatically inserted.",
+            "displayOptions": {
+                "show": {
+                    "operation": ["summarizeDay"]
+                }
+            }
+        },
+        {
+            "displayName": "Chat Model",
+            "name": "chatModel",
+            "type": "credentials",
+            "required": true,
+            "description": "Select your pre-configured Chat Model credential (e.g., OpenAI, Ollama, Azure OpenAI) to use for the summarization task. The available models depend on your n8n environment setup.",
+            "displayOptions": {
+                "show": {
+                    "operation": ["summarizeDay"]
+                }
+            },
+            "credentialTypes": [
+                "n8n-nodes-langchain.openAiChatModel",
+                "n8n-nodes-langchain.ollamaChatModel",
+                "n8n-nodes-langchain.azureOpenAiChatModel",
+                "n8n-nodes-langchain.anthropicChatModel",
+                "openAiApi",
+                "azureOpenAiApi"
+            ],
+            "default": ""
+        },
+        {
+            "displayName": "Additional Fields",
+            "name": "additionalFields",
+            "type": "collection",
+            "placeholder": "Add Field",
+            "default": {},
+            "displayOptions": {
+                "show": {
+                    "operation": [
+                        "getLifelogs"
+                    ]
+                }
+            },
+            "options": [
+                {
+                    "displayName": "Cursor",
+                    "name": "cursor",
+                    "type": "string",
+                    "default": "",
+                    "description": "Cursor for pagination, used when fetching a large number of lifelogs with the 'Get Lifelogs' operation."
+                },
+                {
+                    "displayName": "Limit (for Get Lifelogs)",
+                    "name": "limit",
+                    "type": "number",
+                    "typeOptions": {
+                        "minValue": 1
+                    },
+                    "default": 50,
+                    "description": "Max number of results to return per page for the 'Get Lifelogs' operation."
+                }
+            ]
+        }
+    ]
+}

@@ -218,8 +218,8 @@ export class Limitless implements INodeType {
                 if (filteringMethod === 'byDate' && date) {
                     options.qs.date = date.split('T')[0]; // Extract just the date part
                 } else if (filteringMethod === 'byStartEnd') {
-                    if (start) options.qs.start = start.split('T')[0] + 'T00:00:00Z'; // Format as ISO date at start of day
-                    if (end) options.qs.end = end.split('T')[0] + 'T23:59:59Z'; // Format as ISO date at end of day
+                    if (start) options.qs.start = start; // Pass directly as ISO-8601
+                    if (end) options.qs.end = end;     // Pass directly as ISO-8601
                 }
 
                 // Add timezone parameter
