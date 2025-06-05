@@ -105,8 +105,8 @@ describe('Limitless Node', () => {
                 uri: 'https://mockapi.limitless.com/v1/lifelogs',
                 qs: {
                     date: '',
-                    start: '2023-10-26T00:00:00Z',
-                    end: '2023-10-27T23:59:59Z',
+                    start: '2023-10-26T10:00:00.000Z',
+                    end: '2023-10-27T10:00:00.000Z',
                     timezone: 'Europe/Berlin',
                     cursor: '',
                     limit: 10,

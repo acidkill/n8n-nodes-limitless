@@ -37,6 +37,18 @@ class Limitless {
                             action: 'Returns a list of lifelogs based on specified time range or date',
                             description: 'Returns a list of lifelogs based on specified time range or date',
                         },
+                        {
+                            name: 'Export Markdown',
+                            value: 'exportMarkdown',
+                            action: 'Exports lifelogs as markdown for a specified date',
+                            description: 'Exports lifelogs as markdown for a specified date',
+                        },
+                        {
+                            name: 'Summarize Day',
+                            value: 'summarizeDay',
+                            action: 'Summarizes the lifelogs for a given day using an AI model',
+                            description: 'Summarizes the lifelogs for a given day using an AI model',
+                        },
                     ],
                     default: 'getLifelogs',
                     noDataExpression: true,
@@ -51,6 +63,8 @@ class Limitless {
                         show: {
                             operation: [
                                 'getLifelogs',
+                                'exportMarkdown',
+                                'summarizeDay',
                             ],
                         },
                     },
@@ -88,9 +102,16 @@ class Limitless {
                         show: {
                             operation: [
                                 'getLifelogs',
+                                'exportMarkdown',
+                                'summarizeDay',
+                            ],
+                        },
+                        hide: {
+                            operation: [
+                                'getLifelogs',
                             ],
                             filteringMethod: [
-                                'byDate',
+                                'byStartEnd',
                             ],
                         },
                     },
@@ -162,6 +183,79 @@ class Limitless {
                         },
                     ],
                 },
+                {
+                    displayName: 'Direction',
+                    name: 'direction',
+                    type: 'options',
+                    options: [
+                        {
+                            name: 'Ascending',
+                            value: 'asc',
+                        },
+                        {
+                            name: 'Descending',
+                            value: 'desc',
+                        },
+                    ],
+                    default: 'desc',
+                    description: 'The direction to sort the lifelogs',
+                    displayOptions: {
+                        show: {
+                            operation: ['exportMarkdown'],
+                        },
+                    },
+                },
+                {
+                    displayName: 'Limit',
+                    name: 'limit',
+                    type: 'number',
+                    default: 10,
+                    description: 'The maximum number of lifelogs to return',
+                    displayOptions: {
+                        show: {
+                            operation: ['exportMarkdown'],
+                        },
+                    },
+                },
+                {
+                    displayName: 'Lifelog Limit',
+                    name: 'lifelogLimit',
+                    type: 'number',
+                    default: 100,
+                    description: 'The maximum number of lifelogs to fetch for summarization',
+                    displayOptions: {
+                        show: {
+                            operation: ['summarizeDay'],
+                        },
+                    },
+                },
+                {
+                    displayName: 'Prompt',
+                    name: 'prompt',
+                    type: 'string',
+                    default: "You are a helpful assistant that summarizes transcripts. Summarize the following transcripts into a concise overview of the day's events, activities, and key topics discussed:\n\n{{$json.lifelogsText}}",
+                    description: 'The prompt to use for summarization. Use {{$json.lifelogsText}} as a placeholder for the lifelogs text.',
+                    displayOptions: {
+                        show: {
+                            operation: ['summarizeDay'],
+                        },
+                    },
+                },
+                {
+                    displayName: 'Chat Model',
+                    name: 'chatModel',
+                    type: 'options',
+                    typeOptions: {
+                        credentialType: 'chatModel',
+                    },
+                    default: '',
+                    description: 'The chat model to use for summarization',
+                    displayOptions: {
+                        show: {
+                            operation: ['summarizeDay'],
+                        },
+                    },
+                },
             ],
         };
     }
@@ -181,7 +275,7 @@ class Limitless {
                 const credentials = await this.getCredentials('limitlessApi');
                 const apiUrl = credentials.apiUrl;
                 const normalizedApiUrl = apiUrl.replace(/\/$/, "");
-                const apiEndpointPath = this.getNodeParameter('apiEndpointPath', i, 'v1/lifelogs');
+                const apiEndpointPath = 'v1/lifelogs';
                 const options = {
                     method: 'GET',
                     uri: `${normalizedApiUrl}/${apiEndpointPath.startsWith('/') ? apiEndpointPath.substring(1) : apiEndpointPath}`,
@@ -234,7 +328,7 @@ class Limitless {
                 const credentials = await this.getCredentials('limitlessApi');
                 const apiUrl = credentials.apiUrl;
                 const normalizedApiUrl = apiUrl.replace(/\/$/, "");
-                const apiEndpointPath = this.getNodeParameter('apiEndpointPath', i, 'v1/lifelogs');
+                const apiEndpointPath = 'v1/lifelogs';
                 const options = {
                     method: 'GET',
                     uri: `${normalizedApiUrl}/${apiEndpointPath.startsWith('/') ? apiEndpointPath.substring(1) : apiEndpointPath}`,
@@ -280,7 +374,7 @@ class Limitless {
                 const credentials = await this.getCredentials('limitlessApi');
                 const apiUrl = credentials.apiUrl;
                 const normalizedApiUrl = apiUrl.replace(/\/$/, "");
-                const apiEndpointPath = this.getNodeParameter('apiEndpointPath', i, 'v1/lifelogs');
+                const apiEndpointPath = 'v1/lifelogs';
                 const options = {
                     method: 'GET',
                     uri: `${normalizedApiUrl}/${apiEndpointPath.startsWith('/') ? apiEndpointPath.substring(1) : apiEndpointPath}`,
